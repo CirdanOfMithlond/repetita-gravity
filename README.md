@@ -5,9 +5,10 @@ documents. It asks not only whether meaning recurs, but where that meaning belon
 and whether it can be consolidated without damaging donor sentences, losing unique
 substance, or removing intentional structure.
 
-This repository currently contains the methodology-first foundation. It is not yet
-the finished hackathon interface and deliberately does not display the final
-`VERIFIED BY REPETITA GRAVITY` certification.
+This repository contains a working methodology-first hackathon MVP with a compact
+browser workflow and dependency-free Python service. It deliberately withholds the
+final `VERIFIED BY REPETITA GRAVITY` certification until both formal conservation
+gates and independent global semantic review pass.
 
 ## What works now
 
@@ -25,7 +26,7 @@ the finished hackathon interface and deliberately does not display the final
 - adaptive one-to-five-pass planning with early stop, added-pass and risk-stop decisions;
 - global ledger reconciliation against both the previous state and immutable original;
 - protection of evidence, structural recurrence and partial overlap;
-- automated adversarial tests.
+- automated adversarial tests;
 - a dependency-free Python HTTP service and compact 1920×1080 workflow dashboard.
 
 ## What is intentionally withheld
@@ -130,7 +131,7 @@ used through Codex and the runtime semantic adjudicator specified by the product
 - live GPT-5.6 donor-repair and receiver-accretion evaluations have not yet run;
 - the formal global verifier exists, but a calibrated whole-document semantic
   certification gate remains to be implemented;
-- no public UI or deployment exists yet.
+- the browser UI is working locally; public deployment remains pending.
 
 These limitations are explicit because the project’s value depends on withholding
 claims that its current verification layer cannot support.

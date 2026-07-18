@@ -10,6 +10,7 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const esc = (value = "") => String(value).replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
 const pct = (value) => `${Math.round(Number(value || 0) * 100)}%`;
+const pretty = (value = "") => String(value).replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 function setSystem(status, detail, tone = "ready") {
   $("#systemStatus").textContent = status;
@@ -87,8 +88,13 @@ function renderLedger() {
 
 function familyCard(family, mode) {
   const scores = Object.entries(family.gravity_scores || {});
+  const evidence = Object.values(family.pair_evidence || {});
+  const meanComposite = evidence.length ? evidence.reduce((sum, item) => sum + Number(item.composite), 0) / evidence.length : 0;
   const decisionSummary = family.decisions.reduce((acc, item) => ({...acc, [item.disposition]:(acc[item.disposition] || 0) + 1}), {});
-  return `<article class="family-card"><header><strong>${esc(family.label)}</strong><small>${family.unit_ids.length} OCCURRENCES</small></header><div class="sections">${family.sections.map((section) => `<span>${esc(section)}</span>`).join("")}</div>${mode >= 5 ? `<p class="centre">Centre → ${esc(family.gravity_centre)}</p>${scores.map(([name, score]) => `<div class="score-row"><span>${esc(name)}</span><span>${Number(score).toFixed(2)}</span><div class="score-bar"><i style="width:${Math.max(4, Number(score) * 100)}%"></i></div><span></span></div>`).join("")}` : ""}${mode === 4 ? `<div class="score-row"><span>${Object.entries(decisionSummary).map(([key,value]) => `${value} ${key.replaceAll("_"," ")}`).join(" · ")}</span><span></span></div>` : ""}</article>`;
+  const mappingSignal = mode === 3 ? `<div class="signal-row"><span>MEAN COMPOSITE</span><strong>${meanComposite.toFixed(2)}</strong><span>${evidence.length} pair${evidence.length === 1 ? "" : "s"} compared</span></div>` : "";
+  const decisionSignal = mode === 4 ? `<div class="decision-summary">${Object.entries(decisionSummary).map(([key,value]) => `<span>${value} ${esc(pretty(key))}</span>`).join("")}</div>` : "";
+  const centreSignal = mode >= 5 ? `<p class="centre">Centre → ${esc(family.gravity_centre)}</p><div class="centre-scores">${scores.map(([name, score]) => `<div class="centre-score"><div><span>${esc(name)}</span><strong>${Number(score).toFixed(2)}</strong></div><div class="score-bar"><i style="width:${Math.max(4, Number(score) * 100)}%"></i></div></div>`).join("")}</div><p class="gravity-reason">${esc(family.gravity_rationale)}</p>` : "";
+  return `<article class="family-card"><header><strong>${esc(family.label)}</strong><small>${family.unit_ids.length} OCCURRENCES</small></header><div class="sections">${family.sections.map((section) => `<span>${esc(section)}</span>`).join("")}</div>${mappingSignal}${decisionSignal}${centreSignal}</article>`;
 }
 
 function renderFamilies(mode) {
@@ -97,7 +103,7 @@ function renderFamilies(mode) {
   $("#mapContent").innerHTML = `<div class="family-list">${state.analysis.families.map((family) => familyCard(family, mode)).join("") || `<article class="family-card"><strong>No candidate family crossed the conservative threshold.</strong></article>`}</div>`;
   if (mode === 4) {
     $("#resultTitle").textContent = "Disposition register";
-    $("#resultContent").innerHTML = `<div class="decision-list">${state.analysis.families.flatMap((family) => family.decisions.map((decision) => `<article class="decision-card"><header><code>${esc(decision.unit_id)}</code><small>${Number(decision.confidence).toFixed(2)}</small></header><strong>${esc(decision.semantic_relation.replaceAll("_", " "))}</strong><br><small>${esc(decision.rationale)}</small><div class="disposition ${decision.disposition.includes("preserve") ? "preserve" : decision.disposition.includes("review") ? "review" : ""}">${esc(decision.disposition.replaceAll("_", " "))}</div></article>`)).join("")}</div>`;
+    $("#resultContent").innerHTML = `<div class="decision-list">${state.analysis.families.flatMap((family) => family.decisions.map((decision) => `<article class="decision-card"><header><code>${esc(decision.unit_id)}</code><small>CONFIDENCE ${Number(decision.confidence).toFixed(2)}</small></header><div class="axis-grid"><div><small>SEMANTIC RELATION</small><strong>${esc(pretty(decision.semantic_relation))}</strong></div><div><small>LOCAL FUNCTION</small><strong>${esc(pretty(decision.local_function))}</strong></div><div><small>EDITORIAL DISPOSITION</small><strong>${esc(pretty(decision.disposition))}</strong></div></div><p>${esc(decision.rationale)}</p><div class="disposition ${decision.disposition.includes("preserve") ? "preserve" : decision.disposition.includes("review") ? "review" : ""}">${esc(pretty(decision.disposition))}</div></article>`)).join("")}</div>`;
   }
 }
 
@@ -145,8 +151,10 @@ function renderVerification() {
 function renderReport() {
   const report = state.pass.global_verification;
   const tx = state.pass.transactions;
+  const formalPassed = report.ledger_coverage === 1 && !report.failures.length;
+  const transactionDetails = tx.map((item) => `<article class="report-card transaction wide"><small>COMMITTED FAMILY TRANSACTION · ${esc(item.transaction_id)}</small><strong>${item.donors.length} donor repaired → ${esc(item.centre)}</strong>${item.donors.map((donor) => `<div class="repair-pair"><span><b>BEFORE</b>${esc(donor.original_text)}</span><span><b>AFTER</b>${esc(donor.proposed_repair)}</span></div>`).join("")}</article>`).join("");
   $("#resultTitle").textContent = "Gravity Report";
-  $("#resultContent").innerHTML = `<div class="report-list"><article class="report-card accent"><small>FINAL STATE</small><strong>${esc(report.status.replaceAll("_", " "))}</strong></article><article class="report-card"><small>LEDGER RECONCILIATION</small><strong>${report.accounted_unit_count} / ${report.original_unit_count}</strong></article><article class="report-card"><small>FAMILY TRANSACTIONS</small><strong>${tx.length}</strong></article><article class="report-card"><small>HARD ANCHOR LOSSES</small><strong>${report.missing_hard_anchors.length}</strong></article><article class="report-card"><small>UNRESOLVED OCCURRENCES</small><strong>${report.unresolved_occurrences}</strong></article><article class="report-card"><small>STOP REASON</small><p>${esc(state.pass.stop_reason)}</p></article></div>`;
+  $("#resultContent").innerHTML = `<div class="report-list"><article class="report-card certification ${formalPassed ? "pending" : "failed"}"><small>FINAL CERTIFICATION</small><strong>NOT YET VERIFIED</strong><p>${formalPassed ? `Formal conservation gates passed; ${report.unresolved_occurrences} occurrence${report.unresolved_occurrences === 1 ? "" : "s"} still require semantic adjudication.` : "At least one critical conservation gate failed."}</p></article><div class="report-kpis"><article class="report-card"><small>LEDGER COVERAGE</small><strong>${report.accounted_unit_count} / ${report.original_unit_count}</strong></article><article class="report-card"><small>TRANSACTIONS</small><strong>${tx.length}</strong></article><article class="report-card"><small>ANCHOR LOSSES</small><strong>${report.missing_hard_anchors.length}</strong></article><article class="report-card"><small>UNRESOLVED</small><strong>${report.unresolved_occurrences}</strong></article><article class="report-card"><small>PASSES</small><strong>1 / ${state.complexity.planned_passes}</strong></article><article class="report-card"><small>NEW FAMILIES</small><strong>${report.newly_introduced_family_count}</strong></article></div>${transactionDetails}<article class="report-card wide"><small>STOP REASON</small><p>${esc(state.pass.stop_reason)}</p></article></div>`;
   setSystem("REPORT GENERATED", "Final certification remains unavailable until global semantic review passes.", "warn");
 }
 
@@ -162,11 +170,22 @@ async function executeStep(step) {
       updateMetrics();
       renderSections();
       setSystem("DOCUMENT READ", "Immutable source indexed; no rewrite authorised.");
-    } else if (step === 2) renderLedger();
-    else if (step === 3) renderFamilies(3);
-    else if (step === 4) renderFamilies(4);
-    else if (step === 5) renderFamilies(5);
-    else if (step === 6) renderPlan();
+    } else if (step === 2) {
+      renderLedger();
+      setSystem("LEDGER INDEXED", `${state.analysis.document.units.length} immutable semantic units received stable identifiers.`);
+    } else if (step === 3) {
+      renderFamilies(3);
+      setSystem("RECURRENCES MAPPED", `${state.analysis.families.length} conservative complete-link families detected.`);
+    } else if (step === 4) {
+      renderFamilies(4);
+      setSystem("OCCURRENCES CLASSIFIED", "Relation, local function, and editorial disposition remain separate.");
+    } else if (step === 5) {
+      renderFamilies(5);
+      setSystem("CENTRES LOCATED", "Candidate sections scored by functional competence and disruption risk.");
+    } else if (step === 6) {
+      renderPlan();
+      setSystem("PASS PLAN READY", `${state.complexity.planned_passes} pass safety cap selected; early stopping remains active.`);
+    }
     else if (step === 7) {
       state.pass = await api("/api/safe-pass", {text: state.originalText});
       renderPass();
@@ -201,4 +220,3 @@ $("#fileInput").addEventListener("change", async (event) => {
 
 loadSample();
 setStep(0);
-

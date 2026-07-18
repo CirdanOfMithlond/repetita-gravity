@@ -55,6 +55,9 @@ def plan_families(document: DocumentModel, families: list[RecurrenceFamily]) -> 
             score = 0.35 * role_fit + 0.25 * completeness + 0.15 * evidence_proximity + 0.15 * coherence + 0.10 * disruption
             family.gravity_scores[section] = round(score, 4)
         family.gravity_centre = max(family.gravity_scores, key=family.gravity_scores.get)
+        ranked_centres = sorted(family.gravity_scores.items(), key=lambda item: item[1], reverse=True)
+        if len(ranked_centres) > 1:
+            family.competing_centre, family.competing_score = ranked_centres[1]
 
         pair_scores_by_unit: dict[str, list[float]] = defaultdict(list)
         for pair, evidence in family.pair_evidence.items():
@@ -118,5 +121,22 @@ def plan_families(document: DocumentModel, families: list[RecurrenceFamily]) -> 
         ambiguity = sum(1 for d in family.decisions if d.disposition == Disposition.HUMAN_REVIEW) / len(family.decisions)
         centrality = min(1.0, len(family.unit_ids) / max(2, len(document.units)))
         family.risk_score = round(0.30 * unique_density + 0.25 * section_spread + 0.25 * ambiguity + 0.20 * centrality, 4)
+        centre_units = section_units[family.gravity_centre]
+        strongest_function = max(
+            (unit.local_function for unit in centre_units),
+            key=lambda function: CENTER_FIT[function],
+        ).value.replace("_", " ")
+        risk_band = "low" if family.risk_score < 0.25 else "moderate" if family.risk_score < 0.50 else "high"
+        competing = (
+            f" It scored {family.gravity_scores[family.gravity_centre]:.2f} versus "
+            f"{family.competing_score:.2f} for {family.competing_centre}."
+            if family.competing_centre
+            else " It is the only functionally competent candidate section."
+        )
+        family.gravity_rationale = (
+            f"{family.gravity_centre} has the strongest {strongest_function} role fit and can host "
+            f"the canonical treatment.{competing} Redistribution risk is {risk_band} "
+            f"({family.risk_score:.2f}); protected and uncertain occurrences remain outside the centre."
+        )
 
     return sorted(families, key=lambda family: (family.risk_score, len(family.unit_ids)))

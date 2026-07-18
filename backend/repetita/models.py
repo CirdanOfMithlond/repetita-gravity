@@ -111,6 +111,9 @@ class RecurrenceFamily:
     risk_score: float = 0.0
     gravity_centre: str | None = None
     gravity_scores: dict[str, float] = field(default_factory=dict)
+    competing_centre: str | None = None
+    competing_score: float = 0.0
+    gravity_rationale: str = ""
     decisions: list[OccurrenceDecision] = field(default_factory=list)
 
 

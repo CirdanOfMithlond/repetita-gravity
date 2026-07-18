@@ -24,7 +24,14 @@ class FrontendContractTests(unittest.TestCase):
         html = (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
         self.assertNotRegex(html, r'https?://')
 
+    def test_stage_status_and_three_axis_classification_are_visible(self) -> None:
+        script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("LEDGER INDEXED", script)
+        self.assertIn("RECURRENCES MAPPED", script)
+        self.assertIn("SEMANTIC RELATION", script)
+        self.assertIn("LOCAL FUNCTION", script)
+        self.assertIn("EDITORIAL DISPOSITION", script)
+
 
 if __name__ == "__main__":
     unittest.main()
-

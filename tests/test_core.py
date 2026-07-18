@@ -93,6 +93,24 @@ class RecurrenceTests(unittest.TestCase):
         families = detect_families(document.units, candidate_threshold=0.38)
         self.assertTrue(all(len(family.unit_ids) <= 2 for family in families))
 
+    def test_family_labels_never_expose_internal_concept_ids(self) -> None:
+        result = analyse_document(
+            "# Summary\n\nRepeated explanations retain the evidence.\n\n"
+            "# Conclusion\n\nThe evidence remains while repeated explanations are consolidated."
+        )
+        self.assertTrue(result.families)
+        self.assertTrue(all("c2" not in family.label.lower() for family in result.families))
+
+    def test_gravity_centre_exposes_competitor_and_rationale(self) -> None:
+        result = analyse_document(
+            "# Background\n\nAccess reviews occur every 90 days.\n\n"
+            "# Recommendations\n\nAccess reviews occur every 90 days."
+        )
+        family = result.families[0]
+        self.assertEqual(family.gravity_centre, "Recommendations")
+        self.assertEqual(family.competing_centre, "Background")
+        self.assertIn("Redistribution risk", family.gravity_rationale)
+
 
 class VerificationTests(unittest.TestCase):
     def test_analysis_never_claims_final_rewrite_certification(self) -> None:
