@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repetita.gravity/schemas/rewrite-proposal.schema.json",
+  "title": "Model-proposed donor repair and receiver accretion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["family_id", "centre_section", "donors", "receiver", "changed_unit_ids", "unresolved_questions"],
+  "properties": {
+    "family_id": {"type": "string"},
+    "centre_section": {"type": "string"},
+    "donors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit_id", "source_text_sha256", "original_text", "duplicated_payload", "unique_residual_payload", "local_function", "grammatical_dependencies", "hard_anchors", "disposition", "proposed_repair"],
+        "properties": {
+          "unit_id": {"type": "string"},
+          "source_text_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "original_text": {"type": "string"},
+          "duplicated_payload": {"type": "array", "items": {"type": "string"}},
+          "unique_residual_payload": {"type": "array", "items": {"type": "string"}},
+          "local_function": {"type": "string"},
+          "grammatical_dependencies": {"type": "array", "items": {"type": "string"}},
+          "hard_anchors": {"type": "array", "items": {"type": "string"}},
+          "disposition": {"enum": ["transfer_to_centre", "merge_into_centre", "convert_to_cross_reference", "remove_fully_redundant", "human_review"]},
+          "proposed_repair": {"type": "string"}
+        }
+      }
+    },
+    "receiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "source_text_sha256", "original_text", "incoming_payload", "proposed_text", "provenance"],
+      "properties": {
+        "unit_id": {"type": "string"},
+        "source_text_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "original_text": {"type": "string"},
+        "incoming_payload": {"type": "array", "items": {"type": "string"}},
+        "proposed_text": {"type": "string"},
+        "provenance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_unit_id", "integrated_payload"],
+            "properties": {
+              "source_unit_id": {"type": "string"},
+              "integrated_payload": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "changed_unit_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}}
+  }
+}
+

@@ -162,3 +162,121 @@ def prepare_exact_transaction(source: str, document: DocumentModel, family: Recu
         revised_document=revised,
     )
 
+
+def apply_model_transaction(
+    source: str,
+    document: DocumentModel,
+    family: RecurrenceFamily,
+    proposal: dict,
+    semantic_verification: dict,
+) -> FamilyTransaction:
+    """Validate and atomically apply a model proposal, or return a rollback."""
+    from .openai_rewrite import validate_rewrite_proposal, validate_semantic_verification
+
+    validate_rewrite_proposal(proposal, document, family)
+    validate_semantic_verification(semantic_verification, family)
+    by_id = {unit.unit_id: unit for unit in document.units}
+    failures: list[str] = []
+    if proposal["unresolved_questions"]:
+        failures.append("Rewrite proposal contains unresolved questions")
+    if any(donor["disposition"] == "human_review" for donor in proposal["donors"]):
+        failures.append("At least one donor requires human review")
+    if semantic_verification["overall"] != "passed":
+        failures.extend(semantic_verification["failures"] or ["Independent semantic verification did not pass"])
+
+    records_by_id = {donor["unit_id"]: donor for donor in proposal["donors"]}
+    receiver = proposal["receiver"]
+    edits: list[tuple[int, int, str, str]] = []
+    for donor in proposal["donors"]:
+        unit = by_id[donor["unit_id"]]
+        edits.append((unit.location.char_start, unit.location.char_end, donor["proposed_repair"], unit.unit_id))
+        if donor["disposition"] == "convert_to_cross_reference" and proposal["centre_section"].lower() not in donor["proposed_repair"].lower():
+            failures.append(f"{unit.unit_id}: cross-reference does not name the gravity centre")
+    receiver_unit = by_id[receiver["unit_id"]]
+    if receiver["proposed_text"] != receiver["original_text"]:
+        edits.append(
+            (
+                receiver_unit.location.char_start,
+                receiver_unit.location.char_end,
+                receiver["proposed_text"],
+                receiver_unit.unit_id,
+            )
+        )
+
+    spans = sorted((start, end) for start, end, _replacement, _unit_id in edits)
+    if any(left_end > right_start for (_left_start, left_end), (right_start, _right_end) in zip(spans, spans[1:])):
+        failures.append("Proposed mutation spans overlap")
+
+    revised = source
+    for start, end, replacement, unit_id in sorted(edits, reverse=True):
+        if source[start:end] != by_id[unit_id].text:
+            failures.append(f"{unit_id}: immutable source span no longer matches")
+            continue
+        revised = revised[:start] + replacement + revised[end:]
+
+    original_anchor_values = {
+        anchor
+        for unit_id in family.unit_ids
+        for anchor in _all_anchor_values(by_id[unit_id])
+    }
+    missing_anchors = sorted(anchor for anchor in original_anchor_values if anchor not in revised)
+    if missing_anchors:
+        failures.append(f"Hard anchors missing after rewrite: {missing_anchors}")
+
+    provenance_ids = {
+        item["source_unit_id"]
+        for item in receiver["provenance"]
+    }
+    incoming_donor_ids = {
+        donor["unit_id"]
+        for donor in proposal["donors"]
+        if donor["duplicated_payload"] or donor["unique_residual_payload"]
+    }
+    if not incoming_donor_ids.issubset(provenance_ids):
+        failures.append("Receiver provenance does not cover every incoming donor")
+
+    centre_resolves = proposal["centre_section"] in {section["title"] for section in document.sections}
+    checks_pass = all(
+        check["original_payload_covered"]
+        and check["unique_residual_covered"]
+        and check["local_function_preserved"]
+        and check["hard_anchors_preserved"]
+        for check in semantic_verification["unit_checks"]
+    )
+    verification = TransactionVerification(
+        ledger_reconciled=len(semantic_verification["unit_checks"]) == len(family.unit_ids) and checks_pass,
+        anchors_preserved=not missing_anchors,
+        scope_isolated=not any("span" in failure for failure in failures),
+        cross_references_resolve=centre_resolves and not any("cross-reference" in failure for failure in failures),
+        new_duplication_absent=semantic_verification["no_new_duplication"],
+        semantic_adjudication=semantic_verification["overall"],
+        failures=tuple(failures),
+    )
+    passed = all(
+        (
+            verification.ledger_reconciled,
+            verification.anchors_preserved,
+            verification.scope_isolated,
+            verification.cross_references_resolve,
+            verification.new_duplication_absent,
+            semantic_verification["no_meaning_shift"],
+            semantic_verification["narrative_continuity"],
+            not failures,
+        )
+    )
+    if not passed:
+        revised = source
+    base_hash = document_hash(source)
+    transaction_id = "tx_" + hashlib.sha256(f"{base_hash}|{family.family_id}|model".encode()).hexdigest()[:12]
+    return FamilyTransaction(
+        transaction_id=transaction_id,
+        family_id=family.family_id,
+        base_document_hash=base_hash,
+        state="committed" if passed else "rolled_back",
+        centre=proposal["centre_section"],
+        donors=tuple(proposal["donors"]),
+        receiver=proposal["receiver"],
+        changed_unit_ids=tuple(proposal["changed_unit_ids"]),
+        verification=verification,
+        revised_document=revised,
+    )

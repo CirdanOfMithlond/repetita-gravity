@@ -19,8 +19,11 @@ the finished hackathon interface and deliberately does not display the final
 - three-axis classification: semantic relation, local function and disposition;
 - risk-ordered gravity-centre planning;
 - strict GPT-5.6 family-adjudication contracts through the Responses API;
+- strict donor-repair/receiver-accretion proposals and a separate semantic-verification call;
 - `store:false` requests and server-side API-key handling;
 - deterministic exact-duplicate transactions with atomic commit or rollback;
+- adaptive one-to-five-pass planning with early stop, added-pass and risk-stop decisions;
+- global ledger reconciliation against both the previous state and immutable original;
 - protection of evidence, structural recurrence and partial overlap;
 - automated adversarial tests.
 
@@ -30,8 +33,10 @@ The current deterministic rewrite path handles only whole-sentence exact
 duplicates that have no residual payload and whose hard anchors already exist at
 the receiver. It does not pretend that token overlap proves semantic equivalence.
 Partial overlap, donor repair, receiver accretion and ambiguous centre selection
-require GPT-5.6 adjudication, independent verification and, where necessary, human
-review. Final certification remains disabled until those gates are complete.
+require GPT-5.6 adjudication, an independently prompted semantic-verification call,
+deterministic Python checks and, where necessary, human review. Those contracts and
+rollback mechanics now exist; live API evaluation and calibrated global semantic
+review remain incomplete. Final certification therefore remains disabled.
 
 ## Method
 
@@ -88,8 +93,8 @@ API service. Never place the key in frontend code.
 
 ## Current project structure
 
-- `backend/repetita/`: parser, ledger models, recurrence graph, planner, GPT adapter,
-  verifier, transaction engine and pass controller;
+- `backend/repetita/`: parser, ledger models, recurrence graph, planner, GPT adapters,
+  metrics, global verifier, transaction engine and pass controller;
 - `schemas/`: strict machine contracts for analysis, adjudication and transactions;
 - `sample-data/`: fictional adversarial professional document;
 - `tests/`: deterministic, contract, model-adapter and transaction tests;
@@ -109,11 +114,10 @@ used through Codex and the runtime semantic adjudicator specified by the product
 - the fallback concept dictionary is deliberately small and transparent;
 - no embedding provider or calibrated labelled corpus is connected yet;
 - proposition extraction is presently sentence-bounded in deterministic mode;
-- model-assisted donor repair and receiver accretion are not yet committed;
-- the global post-rewrite semantic verifier and final certification gate remain to
-  be implemented;
+- live GPT-5.6 donor-repair and receiver-accretion evaluations have not yet run;
+- the formal global verifier exists, but a calibrated whole-document semantic
+  certification gate remains to be implemented;
 - no public UI or deployment exists yet.
 
 These limitations are explicit because the project’s value depends on withholding
 claims that its current verification layer cannot support.
-

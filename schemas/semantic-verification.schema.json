@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repetita.gravity/schemas/semantic-verification.schema.json",
+  "title": "Independent semantic verification of a rewrite proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["family_id", "unit_checks", "receiver_complete", "no_new_duplication", "no_meaning_shift", "narrative_continuity", "overall", "failures"],
+  "properties": {
+    "family_id": {"type": "string"},
+    "unit_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit_id", "original_payload_covered", "unique_residual_covered", "local_function_preserved", "hard_anchors_preserved", "rationale"],
+        "properties": {
+          "unit_id": {"type": "string"},
+          "original_payload_covered": {"type": "boolean"},
+          "unique_residual_covered": {"type": "boolean"},
+          "local_function_preserved": {"type": "boolean"},
+          "hard_anchors_preserved": {"type": "boolean"},
+          "rationale": {"type": "string"}
+        }
+      }
+    },
+    "receiver_complete": {"type": "boolean"},
+    "no_new_duplication": {"type": "boolean"},
+    "no_meaning_shift": {"type": "boolean"},
+    "narrative_continuity": {"type": "boolean"},
+    "overall": {"enum": ["passed", "failed", "human_review"]},
+    "failures": {"type": "array", "items": {"type": "string"}}
+  }
+}
+
