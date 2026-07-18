@@ -26,6 +26,14 @@ Title: `Repetita Gravity — OpenAI Build Week Demo`
 
 Visibility: Public. Maximum duration: 2 minutes 45 seconds.
 
+YouTube description:
+
+`Repetita Gravity is a conservative semantic-consolidation engine for long-form documents. It detects recurring meaning, distinguishes accidental redundancy from necessary structure, identifies the Logical Gravity Centre of each theme, repairs donor sentences, and verifies that no evidence, qualification, exception, or unique proposition was lost. Built for OpenAI Build Week with GPT-5.6 Sol, Codex, Python and JavaScript. Try the public demo and inspect the complete source code below.`
+
+`Live demo: https://cirdanofmithlond.github.io/repetita-gravity/`
+
+`Source code: https://github.com/CirdanOfMithlond/repetita-gravity`
+
 Use [demo-script.md](demo-script.md) verbatim. The recording must include voiceover
 and show the final `VERIFIED BY REPETITA GRAVITY` report.
 
@@ -36,6 +44,10 @@ and show the final `VERIFIED BY REPETITA GRAVITY` report.
 3. the Conservation Ledger screen;
 4. the Logical Gravity Centres screen;
 5. the donor-repair before/after screen.
+
+Cover-image caption:
+
+`Recurring ideas are drawn toward their Logical Gravity Centre, where repeated meaning can be consolidated without losing evidence, context or unique content.`
 
 ## Final checks before submission
 

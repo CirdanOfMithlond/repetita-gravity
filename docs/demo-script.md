@@ -1,102 +1,134 @@
-# Repetita Gravity — demo script
+# Repetita Gravity - Friendly YouTube Demo Script
 
-Target duration: 2 minutes 30 seconds. Record only the browser at 1920×1080 and
-100% zoom. Speak slowly. Each action below is intentionally on its own line.
+Target duration: about 2 minutes and 30 seconds.
 
-## 00:00–00:18 — The problem
+Record only the browser at 1920 x 1080 and 100% zoom. Speak naturally, as if you
+were showing the project to an intelligent friend who has never seen it before.
 
-**Speak**
+## 00:00 - 00:18
 
-Repetition is not just the same word appearing twice. In long documents, the same
-idea returns in different language and spreads across sections where it does not
-belong. Removing one sentence can silently destroy evidence, a qualification, or
-the local logic around it.
+SAY:
 
-**Click — 01 Read**
+We have all seen it happen. A long document repeats the same idea again and again,
+but each time in slightly different words. Finding that repetition is easy. Fixing
+it without losing evidence, context, or meaning is the difficult part. That is the
+problem Repetita Gravity was built to solve.
 
-## 00:18–00:38 — Immutable source and resource plan
+CLICK:
 
-**Speak**
+01 Read
 
-Repetita Gravity begins by reading the document without authorising any rewrite.
-It identifies its structure, measures context pressure, and selects a bounded pass
-plan appropriate to the document rather than applying a fixed number of rewrites.
+## 00:18 - 00:36
 
-**Click — 02 Ledger**
+SAY:
 
-## 00:38–00:57 — Conservation before deletion
+Let us begin with this fictional professional document. Before changing anything,
+Repetita Gravity reads its structure, measures its size and complexity, and decides
+how much work is safe. A short letter and a hundred-page report should never be
+handled in exactly the same way.
 
-**Speak**
+CLICK:
 
-Every semantic unit receives a stable identifier and a discourse role. This
-Conservation Ledger is the central rule of the system: no proposition, evidence,
-number, exception, or qualification may disappear without a recorded disposition.
+02 Ledger
 
-**Click — 03 Recurrences**
+## 00:36 - 00:55
 
-## 00:57–01:15 — Semantic families
+SAY:
 
-**Speak**
+Now every meaningful statement receives a stable identity. Claims, evidence,
+numbers, qualifications, exceptions and recommendations are all recorded in a
+Conservation Ledger. This gives the system one simple rule: nothing important may
+disappear silently.
 
-The engine maps recurring meaning into isolated families. It compares lexical and
-concept evidence, but similarity is only a candidate signal; it is never permission
-to delete.
+CLICK:
 
-**Click — 04 Classify**
+03 Recurrences
 
-## 01:15–01:33 — Function before consolidation
+## 00:55 - 01:12
 
-**Speak**
+SAY:
 
-Each occurrence is classified separately by semantic relation, local function, and
-editorial disposition. Intentional structure and necessary evidence remain in
-place. Uncertain cases fail closed instead of being guessed away.
+The engine now discovers families of recurring ideas, including paraphrases that
+ordinary word matching can miss. But similarity is only a clue. Two passages can
+sound alike and still perform completely different jobs.
 
-**Click — 05 Centres**
+CLICK:
 
-## 01:33–01:49 — Logical gravity
+04 Classify
 
-**Speak**
+## 01:12 - 01:31
 
-For every family, candidate sections are scored by functional competence,
-completeness, coherence, and disruption risk. The strongest section becomes the
-Logical Gravity Centre—the natural home of the complete treatment.
+SAY:
 
-**Click — 06 Plan**
+So each occurrence is judged in its own context. Is it accidental repetition,
+necessary evidence, an intentional structural reminder, or a genuinely different
+function? Safe cases can move forward. Uncertain cases are preserved instead of
+being guessed away.
 
-## 01:49–02:00 — Adaptive passes
+CLICK:
 
-**Speak**
+05 Centres
 
-The pass limit adapts to recurrence density and dispersion, with early stopping
-when another rewrite would add more risk than value.
+## 01:31 - 01:48
 
-**Click — 07 Gravity pass**
+SAY:
 
-## 02:00–02:16 — Donor repair
+Here is the gravity idea. Every recurring theme is pulled toward the section where
+it belongs most naturally. That section becomes its Logical Gravity Centre: the
+place where the idea can be explained completely with the least disruption to the
+rest of the document.
 
-**Speak**
+CLICK:
 
-The safe duplicate is consolidated atomically. The donor sentence is repaired into
-a precise cross-reference, while evidence and unique residual content remain
-untouched. Unsafe families are preserved or separately adjudicated.
+06 Plan
 
-**Click — 08 Verify**
+## 01:48 - 02:00
 
-## 02:16–02:30 — Independent verification and report
+SAY:
 
-**Speak**
+Repetita Gravity then creates an adaptive plan. It can stop early when the document
+is stable, or refuse another pass when further rewriting would create more risk
+than benefit.
 
-Python now reconciles every original unit and hard anchor. For this public,
-no-credit demo, versioned GPT-5.6 reference decisions are accepted only for the
-exact hash-bound fictional sample; custom documents fail closed without a live API.
+CLICK:
 
-**Click — 09 Report**
+07 Gravity pass
 
-**Speak**
+## 02:00 - 02:17
 
-The result is not merely shorter. It is auditable, fully covered, and verified by
-Repetita Gravity. I defined the conservation and gravity methodology; Codex and
-GPT-5.6 Sol turned it into this tested, executable system.
+SAY:
 
-Hold the final certified screen for five seconds.
+Watch what happens to this duplicate. The repeated payload is consolidated, but
+the original location is not left broken. Its donor sentence is repaired into a
+clear reference, while unique evidence and qualifications stay exactly where they
+are needed.
+
+CLICK:
+
+08 Verify
+
+## 02:17 - 02:33
+
+SAY:
+
+Finally, an independent Python layer checks every original semantic unit and every
+protected anchor. This public demo uses a versioned GPT-5.6 reference audit tied to
+this exact fictional sample, so it works without an API key or paid credits and
+cannot certify an unrelated document by mistake.
+
+CLICK:
+
+09 Report
+
+## 02:33 - 02:48
+
+SAY:
+
+And here is the result: the repetition is reduced, the document remains fully
+covered, and every decision is auditable. I designed the gravity and conservation
+method. Codex and GPT-5.6 Sol helped turn it into a tested, working system. Every
+idea has a natural home. Repetita Gravity helps it get there safely.
+
+ACTION:
+
+Hold the final VERIFIED BY REPETITA GRAVITY screen for five seconds.
