@@ -37,6 +37,12 @@ class FrontendContractTests(unittest.TestCase):
         self.assertIn("certifies the bundled sample only", script)
         self.assertIn("GPT-5.6 REFERENCE AUDIT + PYTHON RE-VERIFICATION", script)
 
+    def test_final_report_explains_early_stop_without_appearing_incomplete(self) -> None:
+        script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("1 COMPLETED", script)
+        self.assertIn("Stopped early; safety cap", script)
+        self.assertNotIn('1 / ${state.complexity.planned_passes}', script)
+
     def test_stage_status_and_three_axis_classification_are_visible(self) -> None:
         script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
         self.assertIn("LEDGER INDEXED", script)
