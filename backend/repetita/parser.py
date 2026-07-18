@@ -21,6 +21,7 @@ CITATION_RE = re.compile(r"(?:\[[^\]]+\]|\([^)]*\b(?:19|20)\d{2}[^)]*\))")
 DEFINED_TERM_RE = re.compile(r"\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){1,4}\b")
 
 ROLE_MARKERS: tuple[tuple[DiscourseRole, tuple[str, ...]], ...] = (
+    (DiscourseRole.CROSS_REFERENCE, ("see ", "refer to", "as set out in", "as explained in")),
     (DiscourseRole.QUALIFICATION, ("provided that", "subject to", "only if", "unless")),
     (DiscourseRole.LIMITATION, ("however", "limited to", "does not", "cannot")),
     (DiscourseRole.EXCEPTION, ("except", "other than", "save for")),
@@ -65,6 +66,8 @@ def detect_function(section_title: str, role: DiscourseRole) -> LocalFunction:
         return LocalFunction.EVIDENTIARY
     if role == DiscourseRole.DEFINITION:
         return LocalFunction.DEFINITORY
+    if role == DiscourseRole.CROSS_REFERENCE:
+        return LocalFunction.CONTEXT
     return LocalFunction.CONTEXT
 
 

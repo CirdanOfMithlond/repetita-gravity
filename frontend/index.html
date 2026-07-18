@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Conservative semantic consolidation without silent content loss.">
+  <title>Repetita Gravity</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="gravity-mark" aria-hidden="true"><span></span></div>
+        <div>
+          <div class="eyebrow">CONSERVATIVE SEMANTIC CONSOLIDATION</div>
+          <h1>Repetita Gravity</h1>
+        </div>
+      </div>
+      <div class="top-status">
+        <div><span class="status-dot"></span><span id="systemStatus">READY</span></div>
+        <small id="statusDetail">No transformation has been authorised.</small>
+      </div>
+    </header>
+
+    <nav class="workflow" aria-label="Analysis workflow">
+      <button data-step="1"><span>01</span>Read</button>
+      <button data-step="2" disabled><span>02</span>Ledger</button>
+      <button data-step="3" disabled><span>03</span>Recurrences</button>
+      <button data-step="4" disabled><span>04</span>Classify</button>
+      <button data-step="5" disabled><span>05</span>Centres</button>
+      <button data-step="6" disabled><span>06</span>Plan</button>
+      <button data-step="7" disabled class="primary-action"><span>07</span>Gravity pass</button>
+      <button data-step="8" disabled><span>08</span>Verify</button>
+      <button data-step="9" disabled><span>09</span>Report</button>
+      <button id="resetButton" class="reset"><span>↺</span>Reset</button>
+    </nav>
+
+    <section class="metrics" aria-label="Document metrics">
+      <article><small>WORDS</small><strong id="wordMetric">—</strong></article>
+      <article><small>SEMANTIC UNITS</small><strong id="unitMetric">—</strong></article>
+      <article><small>SECTIONS</small><strong id="sectionMetric">—</strong></article>
+      <article><small>FAMILIES</small><strong id="familyMetric">—</strong></article>
+      <article><small>CONTEXT PRESSURE</small><strong id="pressureMetric">—</strong></article>
+      <article><small>INITIAL PASS CAP</small><strong id="passMetric">—</strong></article>
+      <article class="coverage"><small>LEDGER COVERAGE</small><strong id="coverageMetric">PENDING</strong></article>
+    </section>
+
+    <main class="workspace">
+      <section class="panel source-panel">
+        <div class="panel-heading">
+          <div><small>IMMUTABLE INPUT</small><h2>Source document</h2></div>
+          <div class="input-actions">
+            <label class="file-label">Import<input id="fileInput" type="file" accept=".txt,.md,text/plain,text/markdown"></label>
+            <button id="sampleButton">Sample</button>
+          </div>
+        </div>
+        <textarea id="sourceText" spellcheck="false" aria-label="Source document"></textarea>
+        <div class="source-footer">
+          <span id="sourceHash">Source hash: pending</span>
+          <span id="strategyLabel">Strategy: not measured</span>
+        </div>
+      </section>
+
+      <section class="panel map-panel">
+        <div class="panel-heading">
+          <div><small>FAMILY WORKSPACES</small><h2 id="mapTitle">Gravity map</h2></div>
+          <span class="pill" id="mapState">UNMAPPED</span>
+        </div>
+        <div id="mapContent" class="empty-state">
+          <div class="empty-orbit"><i></i><i></i><b></b></div>
+          <p>Read the document to initialise the Conservation Ledger.</p>
+        </div>
+      </section>
+
+      <section class="panel result-panel">
+        <div class="panel-heading">
+          <div><small>TRANSACTION CONTROL</small><h2 id="resultTitle">Verification</h2></div>
+          <span class="pill neutral" id="verificationState">NOT RUN</span>
+        </div>
+        <div id="resultContent" class="empty-state compact">
+          <div class="shield">✓</div>
+          <p>Certification remains withheld until every critical invariant passes.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="auditbar">
+      <span id="auditMessage">Ready — immutable source not yet measured.</span>
+      <span>Every edit must commit atomically or roll back.</span>
+    </footer>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
+

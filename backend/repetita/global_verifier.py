@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-from .models import Disposition
+from .models import DiscourseRole, Disposition
 from .parser import normalize_text, parse_document
 from .pipeline import analyse_document
 from .transaction import FamilyTransaction
@@ -55,7 +55,7 @@ def verify_global_rewrite(
     original = parse_document(original_text)
     revised_result = analyse_document(revised_text)
     revised = revised_result.document
-    revised_normalized = {unit.normalized_text for unit in revised.units}
+    revised_ids = {unit.unit_id for unit in revised.units}
     transaction_by_unit = {
         unit_id: transaction
         for transaction in transactions
@@ -65,7 +65,7 @@ def verify_global_rewrite(
     dispositions: list[LedgerDisposition] = []
     missing: list[str] = []
     for unit in original.units:
-        if unit.normalized_text in revised_normalized:
+        if unit.unit_id in revised_ids:
             dispositions.append(LedgerDisposition(unit.unit_id, "preserved_in_place", unit.location.section_title))
             continue
         transaction = transaction_by_unit.get(unit.unit_id)
@@ -91,14 +91,15 @@ def verify_global_rewrite(
         )
         for family in analyse_document(original_text).families
     }
-    revised_family_text_sets = {
-        frozenset(
-            revised_unit.normalized_text
-            for revised_unit in revised.units
-            if revised_unit.unit_id in family.unit_ids
-        )
-        for family in revised_result.families
-    }
+    revised_by_id = {unit.unit_id: unit for unit in revised.units}
+    revised_family_text_sets = []
+    for family in revised_result.families:
+        family_units = [revised_by_id[unit_id] for unit_id in family.unit_ids]
+        # A generated cross-reference and its canonical target are an intended
+        # orbit, not newly introduced accidental redundancy.
+        if any(unit.discourse_role == DiscourseRole.CROSS_REFERENCE for unit in family_units):
+            continue
+        revised_family_text_sets.append(frozenset(unit.normalized_text for unit in family_units))
     newly_introduced = sum(
         not any(revised_set.issubset(original_set) for original_set in original_family_text_sets)
         for revised_set in revised_family_text_sets
@@ -148,4 +149,3 @@ def verify_global_rewrite(
         status=status,
         failures=tuple(failures),
     )
-

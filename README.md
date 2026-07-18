@@ -26,6 +26,7 @@ the finished hackathon interface and deliberately does not display the final
 - global ledger reconciliation against both the previous state and immutable original;
 - protection of evidence, structural recurrence and partial overlap;
 - automated adversarial tests.
+- a dependency-free Python HTTP service and compact 1920×1080 workflow dashboard.
 
 ## What is intentionally withheld
 
@@ -85,6 +86,17 @@ source .venv/bin/activate
 python -m pip install -e .
 python -m unittest discover -s tests -v
 repetita sample-data/adversarial-professional.md
+repetita-server --host 127.0.0.1 --port 8000
+```
+
+Then open `http://127.0.0.1:8000`. The workflow deliberately reveals one stage at
+a time: structural read, ledger, recurrence graph, classifications, gravity
+centres, adaptive plan, atomic pass, global verification and report.
+
+Docker is optional:
+
+```bash
+docker compose up --build
 ```
 
 For model-assisted adjudication, copy `.env.example` to `.env`, set
@@ -97,6 +109,7 @@ API service. Never place the key in frontend code.
   metrics, global verifier, transaction engine and pass controller;
 - `schemas/`: strict machine contracts for analysis, adjudication and transactions;
 - `sample-data/`: fictional adversarial professional document;
+- `frontend/`: responsive workflow dashboard with no external assets;
 - `tests/`: deterministic, contract, model-adapter and transaction tests;
 - `docs/`: normative methodology and evaluation gates.
 

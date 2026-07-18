@@ -117,7 +117,8 @@ def detect_families(units: list[SemanticUnit], *, candidate_threshold: float = 0
                 evidence_map[f"{a}|{b}"] = evidence
             digest = hashlib.sha256("|".join(ordered).encode()).hexdigest()[:10]
             common = set.intersection(*(_concept_tokens(_content_tokens(by_id[uid])) for uid in ordered))
-            label = " / ".join(sorted(common)[:4]) or "recurring theme"
+            label_terms = [token for token in sorted(common) if token not in {"every"}]
+            label = " / ".join(label_terms[:4]) or "recurring theme"
             families.append(
                 RecurrenceFamily(
                     family_id=f"f_{digest}",

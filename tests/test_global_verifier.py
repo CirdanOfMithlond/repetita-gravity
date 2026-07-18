@@ -36,7 +36,16 @@ class GlobalVerifierTests(unittest.TestCase):
         self.assertEqual(report.status, "NOT_VERIFIED")
         self.assertIn("418", report.missing_hard_anchors)
 
+    def test_identical_text_elsewhere_does_not_hide_untracked_donor_loss(self) -> None:
+        source = (
+            "# Background\n\nThe archive preserves every original record.\n\n"
+            "# Analysis\n\nThe archive preserves every original record."
+        )
+        revised = "# Background\n\n\n\n# Analysis\n\nThe archive preserves every original record."
+        report = verify_global_rewrite(source, revised, [])
+        self.assertEqual(report.status, "NOT_VERIFIED")
+        self.assertEqual(report.ledger_coverage, 0.5)
+
 
 if __name__ == "__main__":
     unittest.main()
-
