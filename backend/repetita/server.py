@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import os
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -47,7 +48,16 @@ class RepetitaHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         if path == "/health":
-            self._json(HTTPStatus.OK, {"status": "ok", "service": "repetita-gravity"})
+            self._json(
+                HTTPStatus.OK,
+                {
+                    "status": "ok",
+                    "service": "repetita-gravity",
+                    "model_configured": bool(os.getenv("OPENAI_API_KEY")),
+                    "model": os.getenv("OPENAI_MODEL", "gpt-5.6"),
+                    "reasoning_effort": os.getenv("OPENAI_REASONING_EFFORT", "high"),
+                },
+            )
             return
         if path == "/api/sample":
             self._json(HTTPStatus.OK, {"text": SAMPLE_PATH.read_text(encoding="utf-8")})

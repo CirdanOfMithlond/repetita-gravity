@@ -24,6 +24,7 @@ class OpenAIAdapterTests(unittest.TestCase):
         request = OpenAIAdjudicator(transport=lambda _: {}).build_request(document, family)
         self.assertEqual(request["model"], "gpt-5.6")
         self.assertFalse(request["store"])
+        self.assertEqual(request["reasoning"]["effort"], "high")
         self.assertTrue(request["text"]["format"]["strict"])
         self.assertEqual(request["text"]["format"]["type"], "json_schema")
 
@@ -106,4 +107,3 @@ class OpenAIAdapterTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

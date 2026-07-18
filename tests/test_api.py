@@ -24,8 +24,9 @@ class ApiTests(unittest.TestCase):
         result = safe_pass_payload({"text": text})
         self.assertIn("See Recommendations", result["revised_document"])
         self.assertEqual(result["global_verification"]["ledger_coverage"], 1.0)
+        self.assertIn("global_semantic_verification", result)
+        self.assertFalse(result["certification"]["eligible"])
 
 
 if __name__ == "__main__":
     unittest.main()
-

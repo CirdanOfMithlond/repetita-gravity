@@ -51,7 +51,10 @@ def verify_global_rewrite(
     original_text: str,
     revised_text: str,
     transactions: list[FamilyTransaction],
+    *,
+    semantically_resolved_unit_ids: set[str] | None = None,
 ) -> GlobalVerificationReport:
+    semantically_resolved_unit_ids = semantically_resolved_unit_ids or set()
     original = parse_document(original_text)
     revised_result = analyse_document(revised_text)
     revised = revised_result.document
@@ -79,6 +82,7 @@ def verify_global_rewrite(
     missing_anchors = sorted(anchor for anchor in _anchor_values(original) if anchor not in revised_text)
     unresolved = sum(
         decision.disposition == Disposition.HUMAN_REVIEW
+        and decision.unit_id not in semantically_resolved_unit_ids
         for family in revised_result.families
         for decision in family.decisions
     )

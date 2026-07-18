@@ -17,10 +17,12 @@ const { chromium } = require('playwright');
     scrollHeight: document.documentElement.scrollHeight,
     status: document.querySelector('#systemStatus').textContent,
     coverage: document.querySelector('#coverageMetric').textContent,
-    report: document.querySelector('#resultContent').textContent.includes('FORMAL GATES PASSED'),
+    report: document.querySelector('#resultContent').textContent.includes('NOT YET VERIFIED'),
+    semanticGate: document.querySelector('#resultContent').textContent.includes('SEMANTIC GATE'),
   }));
   if (layout.scrollHeight > layout.innerHeight + 1) throw new Error(`Page scroll detected: ${JSON.stringify(layout)}`);
   if (layout.coverage !== '100%') throw new Error(`Unexpected coverage: ${JSON.stringify(layout)}`);
+  if (!layout.report || !layout.semanticGate) throw new Error(`Fail-closed report missing: ${JSON.stringify(layout)}`);
   await page.screenshot({ path: '/tmp/repetita-report.png', fullPage: true });
   console.log(JSON.stringify(layout));
   await browser.close();
@@ -28,4 +30,3 @@ const { chromium } = require('playwright');
   console.error(error);
   process.exit(1);
 });
-

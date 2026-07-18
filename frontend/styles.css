@@ -139,9 +139,21 @@ textarea:focus { box-shadow: inset 0 0 0 1px rgba(97,215,199,.22); }
 .report-card.accent strong { color: var(--cyan); }
 .report-card.certification { border-left: 3px solid var(--amber); }
 .report-card.certification.failed { border-left-color: var(--red); }
+.report-card.certification.verified { border-left-color: var(--green); box-shadow: inset 0 0 24px rgba(119,220,155,.05); }
 .report-card.certification strong { display: block; margin: 3px 0 5px; color: var(--amber); font-size: 19px; }
 .report-card.certification.failed strong { color: var(--red); }
+.report-card.certification.verified strong { color: var(--green); }
 .report-card.certification p, .report-card.wide p { margin: 5px 0 0; color: #c0ccd3; font-size: 10px; line-height: 1.45; }
+.model-audit.good { border-left: 2px solid var(--green); }
+.model-audit.warn { border-left: 2px solid var(--amber); }
+.model-audit.bad { border-left: 2px solid var(--red); }
+.semantic-gate { margin-top: 12px; padding: 14px 10px 4px; border-top: 1px solid var(--line); }
+.semantic-gate small, .semantic-gate strong { display: block; }
+.semantic-gate strong { margin-top: 7px; }
+.semantic-gate .pass { color: var(--green); }
+.semantic-gate .fail { color: var(--red); }
+.semantic-gate .pending { color: var(--amber); }
+.semantic-gate p { color: #b2c0c9; font-size: 9px; line-height: 1.45; }
 .report-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .report-kpis .report-card strong { display: block; margin-top: 4px; color: var(--cyan); }
 .repair-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 8px; }

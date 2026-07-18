@@ -118,10 +118,16 @@ function renderPlan() {
 
 function renderPass() {
   const tx = state.pass.transactions;
+  const audits = state.pass.family_audits || [];
+  const auditCards = audits.map((audit) => {
+    const theme = audit.adjudication?.theme_label || audit.family_id || "Runtime semantic layer";
+    const tone = audit.status === "COMMITTED" || audit.status === "PRESERVED" ? "good" : audit.status === "HUMAN_REVIEW" || audit.status === "MODEL_UNAVAILABLE" ? "warn" : "bad";
+    return `<article class="report-card model-audit ${tone}"><small>GPT-5.6 FAMILY AUDIT · ${esc(audit.status)}</small><strong>${esc(theme)}</strong><p>${esc(audit.reason || "Bounded semantic decision recorded.")}</p></article>`;
+  }).join("");
   $("#resultTitle").textContent = "Committed transactions";
   $("#verificationState").textContent = tx.length ? `${tx.length} COMMITTED` : "WITHHELD";
   $("#verificationState").className = tx.length ? "pill good" : "pill warn";
-  $("#resultContent").innerHTML = `<div class="report-list">${tx.map((item) => `<article class="report-card transaction"><small>${esc(item.transaction_id)}</small><br><b>${item.donors.length} donor${item.donors.length === 1 ? "" : "s"} repaired</b><p>${esc(item.donors.map((donor) => donor.proposed_repair).join(" "))}</p><small>Centre: ${esc(item.centre)} · atomic ${esc(item.state)}</small></article>`).join("") || `<article class="report-card"><strong>No automatic rewrite authorised.</strong><p class="rationale">Semantic risk exceeds the deterministic engine’s competence.</p></article>`}<article class="report-card"><small>STOP DECISION</small><p>${esc(state.pass.stop_reason)}</p></article><article class="report-card"><small>REVISED DOCUMENT</small><div class="revised-document">${esc(state.pass.revised_document)}</div></article></div>`;
+  $("#resultContent").innerHTML = `<div class="report-list">${tx.map((item) => `<article class="report-card transaction"><small>${esc(item.transaction_id)}</small><br><b>${item.donors.length} donor${item.donors.length === 1 ? "" : "s"} repaired</b><p>${esc(item.donors.map((donor) => donor.proposed_repair).join(" "))}</p><small>Centre: ${esc(item.centre)} · atomic ${esc(item.state)}</small></article>`).join("") || `<article class="report-card"><strong>No automatic rewrite authorised.</strong><p class="rationale">Semantic risk exceeds the deterministic engine’s competence.</p></article>`}${auditCards}<article class="report-card"><small>STOP DECISION</small><p>${esc(state.pass.stop_reason)}</p></article><article class="report-card"><small>REVISED DOCUMENT</small><div class="revised-document">${esc(state.pass.revised_document)}</div></article></div>`;
   $("#auditMessage").textContent = state.pass.stop_reason;
 }
 
@@ -132,30 +138,36 @@ function renderChecks(checks) {
 
 function renderVerification() {
   const report = state.pass.global_verification;
-  const passed = report.ledger_coverage === 1 && !report.failures.length;
+  const semantic = state.pass.global_semantic_verification || {status: "NOT_RUN"};
+  const formalPassed = report.ledger_coverage === 1 && !report.failures.length;
+  const certified = Boolean(state.pass.certification?.eligible);
   $("#resultTitle").textContent = "Global conservation";
-  $("#verificationState").textContent = passed ? "FORMAL GATES PASSED" : "NOT VERIFIED";
-  $("#verificationState").className = passed ? "pill good" : "pill bad";
+  $("#verificationState").textContent = certified ? "CERTIFIED" : formalPassed ? "FORMAL GATES PASSED" : "NOT VERIFIED";
+  $("#verificationState").className = certified || formalPassed ? "pill good" : "pill bad";
   $("#coverageMetric").textContent = pct(report.ledger_coverage);
-  $("#coverageMetric").style.color = passed ? "var(--green)" : "var(--red)";
-  renderChecks({
+  $("#coverageMetric").style.color = formalPassed ? "var(--green)" : "var(--red)";
+  const formalChecks = {
     every_original_unit_accounted: report.ledger_coverage === 1,
     no_hard_anchor_missing: report.missing_hard_anchors.length === 0,
     all_transactions_committed: report.all_transactions_committed,
     transaction_checks_passed: report.all_transaction_checks_passed,
     no_new_candidate_family: report.newly_introduced_family_count === 0,
-  });
-  setSystem(passed ? "FORMAL GATES PASSED" : "NOT VERIFIED", passed ? "Global semantic certification remains explicitly pending." : "A critical conservation condition failed.", passed ? "ready" : "bad");
+  };
+  renderChecks(formalChecks);
+  $("#resultContent").insertAdjacentHTML("beforeend", `<div class="semantic-gate"><small>INDEPENDENT GPT-5.6 WHOLE-DOCUMENT REVIEW</small><strong class="${semantic.status === "PASSED" ? "pass" : semantic.status === "FAILED" ? "fail" : "pending"}">${esc(semantic.status)}</strong><p>${esc(semantic.reason || (semantic.status === "PASSED" ? "Every source unit and document-level semantic invariant passed independent review." : "Semantic certification remains withheld."))}</p></div>`);
+  setSystem(certified ? state.pass.certification.label : formalPassed ? "FORMAL GATES PASSED" : "NOT VERIFIED", certified ? "Formal and independent semantic gates passed." : formalPassed ? "Independent global semantic certification remains pending." : "A critical conservation condition failed.", certified || formalPassed ? "ready" : "bad");
 }
 
 function renderReport() {
   const report = state.pass.global_verification;
   const tx = state.pass.transactions;
   const formalPassed = report.ledger_coverage === 1 && !report.failures.length;
+  const certification = state.pass.certification || {eligible: false, label: "NOT YET VERIFIED", reasons: []};
+  const semantic = state.pass.global_semantic_verification || {status: "NOT_RUN"};
   const transactionDetails = tx.map((item) => `<article class="report-card transaction wide"><small>COMMITTED FAMILY TRANSACTION · ${esc(item.transaction_id)}</small><strong>${item.donors.length} donor repaired → ${esc(item.centre)}</strong>${item.donors.map((donor) => `<div class="repair-pair"><span><b>BEFORE</b>${esc(donor.original_text)}</span><span><b>AFTER</b>${esc(donor.proposed_repair)}</span></div>`).join("")}</article>`).join("");
   $("#resultTitle").textContent = "Gravity Report";
-  $("#resultContent").innerHTML = `<div class="report-list"><article class="report-card certification ${formalPassed ? "pending" : "failed"}"><small>FINAL CERTIFICATION</small><strong>NOT YET VERIFIED</strong><p>${formalPassed ? `Formal conservation gates passed; ${report.unresolved_occurrences} occurrence${report.unresolved_occurrences === 1 ? "" : "s"} still require semantic adjudication.` : "At least one critical conservation gate failed."}</p></article><div class="report-kpis"><article class="report-card"><small>LEDGER COVERAGE</small><strong>${report.accounted_unit_count} / ${report.original_unit_count}</strong></article><article class="report-card"><small>TRANSACTIONS</small><strong>${tx.length}</strong></article><article class="report-card"><small>ANCHOR LOSSES</small><strong>${report.missing_hard_anchors.length}</strong></article><article class="report-card"><small>UNRESOLVED</small><strong>${report.unresolved_occurrences}</strong></article><article class="report-card"><small>PASSES</small><strong>1 / ${state.complexity.planned_passes}</strong></article><article class="report-card"><small>NEW FAMILIES</small><strong>${report.newly_introduced_family_count}</strong></article></div>${transactionDetails}<article class="report-card wide"><small>STOP REASON</small><p>${esc(state.pass.stop_reason)}</p></article></div>`;
-  setSystem("REPORT GENERATED", "Final certification remains unavailable until global semantic review passes.", "warn");
+  $("#resultContent").innerHTML = `<div class="report-list"><article class="report-card certification ${certification.eligible ? "verified" : formalPassed ? "pending" : "failed"}"><small>FINAL CERTIFICATION</small><strong>${esc(certification.label)}</strong><p>${esc(certification.eligible ? "Formal conservation and independent semantic review passed." : certification.reasons.join(" · ") || "At least one critical certification gate remains unresolved.")}</p></article><div class="report-kpis"><article class="report-card"><small>LEDGER COVERAGE</small><strong>${report.accounted_unit_count} / ${report.original_unit_count}</strong></article><article class="report-card"><small>TRANSACTIONS</small><strong>${tx.length}</strong></article><article class="report-card"><small>ANCHOR LOSSES</small><strong>${report.missing_hard_anchors.length}</strong></article><article class="report-card"><small>UNRESOLVED</small><strong>${report.unresolved_occurrences}</strong></article><article class="report-card"><small>PASSES</small><strong>1 / ${state.complexity.planned_passes}</strong></article><article class="report-card"><small>SEMANTIC GATE</small><strong>${esc(semantic.status)}</strong></article></div>${transactionDetails}<article class="report-card wide"><small>STOP REASON</small><p>${esc(state.pass.stop_reason)}</p></article></div>`;
+  setSystem(certification.eligible ? certification.label : "REPORT GENERATED", certification.eligible ? "The document reached a stable, independently verified state." : "Final certification remains withheld until every semantic gate passes.", certification.eligible ? "ready" : "warn");
 }
 
 async function executeStep(step) {
@@ -189,7 +201,7 @@ async function executeStep(step) {
     else if (step === 7) {
       state.pass = await api("/api/safe-pass", {text: state.originalText});
       renderPass();
-      setSystem("PASS COMPLETE", `${state.pass.transactions.length} atomic transaction(s); unsafe families withheld.`);
+      setSystem("PASS COMPLETE", `${state.pass.transactions.length} atomic transaction(s); semantic layer: ${state.pass.model_status}.`, state.pass.model_status === "MODEL_UNAVAILABLE" ? "warn" : "ready");
     } else if (step === 8) renderVerification();
     else if (step === 9) renderReport();
     setStep(step);

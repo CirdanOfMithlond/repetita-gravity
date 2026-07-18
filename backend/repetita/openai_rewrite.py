@@ -24,10 +24,19 @@ def _anchors(unit) -> list[str]:
     return sorted(set(unit.anchors.numbers + unit.anchors.quotations + unit.anchors.citations + unit.anchors.defined_terms))
 
 
-def _strict_response(model: str, schema_name: str, schema_file: str, developer: str, user_payload: dict) -> dict:
+def _strict_response(
+    model: str,
+    schema_name: str,
+    schema_file: str,
+    developer: str,
+    user_payload: dict,
+    *,
+    reasoning_effort: str = "high",
+) -> dict:
     return {
         "model": model,
         "store": False,
+        "reasoning": {"effort": reasoning_effort},
         "input": [
             {"role": "developer", "content": developer},
             {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
@@ -87,6 +96,7 @@ class OpenAITransactionProposer(OpenAIAdjudicator):
             "rewrite-proposal.schema.json",
             prompt,
             payload,
+            reasoning_effort=self.reasoning_effort,
         )
 
     def propose(self, source: str, document: DocumentModel, family: RecurrenceFamily, adjudication: dict[str, Any]) -> dict:
@@ -163,6 +173,7 @@ class OpenAISemanticVerifier(OpenAIAdjudicator):
             "semantic-verification.schema.json",
             prompt,
             payload,
+            reasoning_effort=self.reasoning_effort,
         )
 
     def verify(self, document: DocumentModel, family: RecurrenceFamily, proposal: dict[str, Any]) -> dict:
@@ -206,4 +217,3 @@ def validate_semantic_verification(verification: dict, family: RecurrenceFamily)
     )
     if verification["overall"] == "passed" and (not all(booleans) or verification["failures"]):
         raise OpenAIAdapterError("Semantic verifier claimed pass despite a failed check")
-

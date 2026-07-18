@@ -24,6 +24,17 @@ class ContractTests(unittest.TestCase):
         self.assertIn("rolled_back", states)
         self.assertIn("human_review", states)
 
+    def test_openai_strict_schemas_avoid_unsupported_unique_items_keyword(self) -> None:
+        for name in (
+            "family-adjudication.schema.json",
+            "rewrite-proposal.schema.json",
+            "semantic-verification.schema.json",
+            "global-semantic-verification.schema.json",
+        ):
+            with self.subTest(schema=name):
+                text = (ROOT / "schemas" / name).read_text(encoding="utf-8")
+                self.assertNotIn("uniqueItems", text)
+
     def test_analysis_result_is_json_serializable(self) -> None:
         result = analyse_document("# Test\n\nA complete proposition remains available.")
         encoded = json.dumps(result.to_dict())

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repetita.gravity/schemas/global-semantic-verification.schema.json",
+  "title": "Independent whole-document semantic certification review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "unit_checks",
+    "evidence_preserved",
+    "qualifications_preserved",
+    "exceptions_preserved",
+    "hard_anchors_preserved",
+    "cross_references_resolve",
+    "gravity_centres_coherent",
+    "no_new_accidental_redundancy",
+    "narrative_continuity",
+    "overall",
+    "failures"
+  ],
+  "properties": {
+    "unit_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit_id",
+          "disposition_confirmed",
+          "semantic_payload_preserved",
+          "unique_content_preserved",
+          "local_function_preserved",
+          "hard_anchors_preserved",
+          "rationale"
+        ],
+        "properties": {
+          "unit_id": {"type": "string"},
+          "disposition_confirmed": {"type": "boolean"},
+          "semantic_payload_preserved": {"type": "boolean"},
+          "unique_content_preserved": {"type": "boolean"},
+          "local_function_preserved": {"type": "boolean"},
+          "hard_anchors_preserved": {"type": "boolean"},
+          "rationale": {"type": "string"}
+        }
+      }
+    },
+    "evidence_preserved": {"type": "boolean"},
+    "qualifications_preserved": {"type": "boolean"},
+    "exceptions_preserved": {"type": "boolean"},
+    "hard_anchors_preserved": {"type": "boolean"},
+    "cross_references_resolve": {"type": "boolean"},
+    "gravity_centres_coherent": {"type": "boolean"},
+    "no_new_accidental_redundancy": {"type": "boolean"},
+    "narrative_continuity": {"type": "boolean"},
+    "overall": {"enum": ["passed", "failed", "human_review"]},
+    "failures": {"type": "array", "items": {"type": "string"}}
+  }
+}

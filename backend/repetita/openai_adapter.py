@@ -11,6 +11,7 @@ from .models import DocumentModel, RecurrenceFamily
 
 API_ENDPOINT = "https://api.openai.com/v1/responses"
 DEFAULT_MODEL = "gpt-5.6"
+DEFAULT_REASONING_EFFORT = "high"
 SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schemas" / "family-adjudication.schema.json"
 
 Transport = Callable[[dict[str, Any]], dict[str, Any]]
@@ -75,6 +76,7 @@ class OpenAIAdjudicator:
     ) -> None:
         self.api_key = api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")
         self.model = model or os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
+        self.reasoning_effort = os.getenv("OPENAI_REASONING_EFFORT", DEFAULT_REASONING_EFFORT)
         self.timeout_seconds = timeout_seconds
         self._transport = transport
 
@@ -125,6 +127,7 @@ class OpenAIAdjudicator:
         return {
             "model": self.model,
             "store": False,
+            "reasoning": {"effort": self.reasoning_effort},
             "input": [
                 {"role": "developer", "content": instructions},
                 {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
@@ -169,5 +172,13 @@ class OpenAIAdjudicator:
         validate_adjudication(adjudication, set(family.unit_ids))
         if adjudication["family_id"] != family.family_id:
             raise OpenAIAdapterError("Adjudication returned the wrong family ID")
+        valid_sections = {section["title"] for section in document.sections}
+        if adjudication["centre_section"] not in valid_sections:
+            raise OpenAIAdapterError("Adjudication selected a gravity centre that does not exist")
+        by_id = {unit.unit_id: unit for unit in document.units}
+        if not any(
+            by_id[unit_id].location.section_title == adjudication["centre_section"]
+            for unit_id in family.unit_ids
+        ):
+            raise OpenAIAdapterError("Adjudication selected a gravity centre with no family occurrence")
         return adjudication
-

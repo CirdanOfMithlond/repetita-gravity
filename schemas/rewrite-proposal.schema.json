@@ -52,8 +52,7 @@
         }
       }
     },
-    "changed_unit_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "changed_unit_ids": {"type": "array", "items": {"type": "string"}},
     "unresolved_questions": {"type": "array", "items": {"type": "string"}}
   }
 }
-

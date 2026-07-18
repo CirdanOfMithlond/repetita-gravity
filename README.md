@@ -21,6 +21,7 @@ gates and independent global semantic review pass.
 - risk-ordered gravity-centre planning;
 - strict GPT-5.6 family-adjudication contracts through the Responses API;
 - strict donor-repair/receiver-accretion proposals and a separate semantic-verification call;
+- an independent, read-only whole-document GPT-5.6 semantic-certification review;
 - `store:false` requests and server-side API-key handling;
 - deterministic exact-duplicate transactions with atomic commit or rollback;
 - adaptive one-to-five-pass planning with early stop, added-pass and risk-stop decisions;
@@ -35,10 +36,13 @@ The current deterministic rewrite path handles only whole-sentence exact
 duplicates that have no residual payload and whose hard anchors already exist at
 the receiver. It does not pretend that token overlap proves semantic equivalence.
 Partial overlap, donor repair, receiver accretion and ambiguous centre selection
-require GPT-5.6 adjudication, an independently prompted semantic-verification call,
-deterministic Python checks and, where necessary, human review. Those contracts and
-rollback mechanics now exist; live API evaluation and calibrated global semantic
-review remain incomplete. Final certification therefore remains disabled.
+require GPT-5.6 adjudication, an independently prompted family verifier,
+deterministic Python checks and, where necessary, human review. A second GPT-5.6
+call then rereads the complete reconstructed document without mutation authority.
+The final certification is emitted by the server only when the formal ledger has
+100% coverage, no family remains unresolved, and the independent whole-document
+review passes. Without a server-side API key, the deterministic demo remains useful
+but deliberately ends at `NOT YET VERIFIED`.
 
 ## Method
 
@@ -101,8 +105,9 @@ docker compose up --build
 ```
 
 For model-assisted adjudication, copy `.env.example` to `.env`, set
-`OPENAI_API_KEY` on the server, and load the environment before running the future
-API service. Never place the key in frontend code.
+`OPENAI_API_KEY` on the server, and load the environment before running the
+service. `OPENAI_REASONING_EFFORT` defaults to `high`. Never place the key in
+frontend code or commit the `.env` file.
 
 ## Current project structure
 
@@ -128,9 +133,11 @@ used through Codex and the runtime semantic adjudicator specified by the product
 - the fallback concept dictionary is deliberately small and transparent;
 - no embedding provider or calibrated labelled corpus is connected yet;
 - proposition extraction is presently sentence-bounded in deterministic mode;
-- live GPT-5.6 donor-repair and receiver-accretion evaluations have not yet run;
-- the formal global verifier exists, but a calibrated whole-document semantic
-  certification gate remains to be implemented;
+- live GPT-5.6 donor-repair, receiver-accretion and global-review evaluations still
+  require a project API key and should be calibrated against a labelled corpus;
+- whole-document semantic certification currently fails closed for inputs that
+  require structural chunking because cross-chunk synthesis verification is not yet
+  implemented in the hackathon MVP;
 - the browser UI is working locally; public deployment remains pending.
 
 These limitations are explicit because the project’s value depends on withholding
