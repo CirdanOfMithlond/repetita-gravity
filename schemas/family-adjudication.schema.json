@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repetita.gravity/schemas/family-adjudication.schema.json",
+  "title": "GPT-5.6 recurrence-family adjudication",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["family_id", "theme_label", "shared_payload", "centre_section", "centre_rationale", "occurrences", "unresolved_questions"],
+  "properties": {
+    "family_id": {"type": "string"},
+    "theme_label": {"type": "string"},
+    "shared_payload": {"type": "array", "items": {"type": "string"}},
+    "centre_section": {"type": "string"},
+    "centre_rationale": {"type": "string"},
+    "occurrences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit_id", "semantic_relation", "local_function", "disposition", "duplicated_payload", "unique_residual_payload", "hard_anchor_risk", "rationale"],
+        "properties": {
+          "unit_id": {"type": "string"},
+          "semantic_relation": {"enum": ["exact_equivalent", "paraphrase_equivalent", "partial_overlap", "related_non_duplicate", "uncertain"]},
+          "local_function": {"enum": ["structural", "summary", "context", "evidentiary", "analytical", "recommendatory", "conclusive", "definitory", "transitional", "unknown"]},
+          "disposition": {"enum": ["preserve_in_place", "transfer_to_centre", "merge_into_centre", "convert_to_cross_reference", "remove_fully_redundant", "human_review"]},
+          "duplicated_payload": {"type": "array", "items": {"type": "string"}},
+          "unique_residual_payload": {"type": "array", "items": {"type": "string"}},
+          "hard_anchor_risk": {"type": "array", "items": {"type": "string"}},
+          "rationale": {"type": "string"}
+        }
+      }
+    },
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}}
+  }
+}
+

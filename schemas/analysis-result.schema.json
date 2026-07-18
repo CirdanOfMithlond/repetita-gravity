@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repetita.gravity/schemas/analysis-result.schema.json",
+  "title": "Repetita Gravity analysis result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["document", "families", "invariants", "warnings", "status"],
+  "properties": {
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "sections", "units", "resource_plan"],
+      "properties": {
+        "title": {"type": "string"},
+        "sections": {"type": "array", "items": {"type": "object"}},
+        "units": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/semanticUnit"}
+        },
+        "resource_plan": {"$ref": "#/$defs/resourcePlan"}
+      }
+    },
+    "families": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/recurrenceFamily"}
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "status": {
+      "enum": [
+        "NOT_VERIFIED",
+        "ANALYSIS_COMPLETE_REWRITE_WITHHELD",
+        "ANALYSIS_VERIFIED_REWRITE_NOT_YET_RUN",
+        "VERIFIED_BY_REPETITA_GRAVITY"
+      ]
+    }
+  },
+  "$defs": {
+    "anchors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numbers", "quotations", "citations", "defined_terms"],
+      "properties": {
+        "numbers": {"type": "array", "items": {"type": "string"}},
+        "quotations": {"type": "array", "items": {"type": "string"}},
+        "citations": {"type": "array", "items": {"type": "string"}},
+        "defined_terms": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section_id", "section_title", "paragraph_index", "sentence_index", "char_start", "char_end"],
+      "properties": {
+        "section_id": {"type": "string"},
+        "section_title": {"type": "string"},
+        "paragraph_index": {"type": "integer", "minimum": 0},
+        "sentence_index": {"type": "integer", "minimum": 0},
+        "char_start": {"type": "integer", "minimum": 0},
+        "char_end": {"type": "integer", "minimum": 0}
+      }
+    },
+    "semanticUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "text", "normalized_text", "location", "discourse_role", "local_function", "anchors", "tokens"],
+      "properties": {
+        "unit_id": {"type": "string", "pattern": "^u_[a-f0-9]{12}$"},
+        "text": {"type": "string", "minLength": 1},
+        "normalized_text": {"type": "string"},
+        "location": {"$ref": "#/$defs/location"},
+        "discourse_role": {"type": "string"},
+        "local_function": {"type": "string"},
+        "anchors": {"$ref": "#/$defs/anchors"},
+        "tokens": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "resourcePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["estimated_tokens", "configured_context_limit", "safe_input_budget", "context_pressure", "strategy", "overlapping_chunks", "initial_pass_cap", "rationale"],
+      "properties": {
+        "estimated_tokens": {"type": "integer", "minimum": 1},
+        "configured_context_limit": {"type": "integer", "minimum": 1000},
+        "safe_input_budget": {"type": "integer", "minimum": 1},
+        "context_pressure": {"type": "number", "minimum": 0},
+        "strategy": {"enum": ["whole_document", "section_chunks_with_global_synthesis", "overlapping_structural_chunks_with_global_ledger"]},
+        "overlapping_chunks": {"type": "integer", "minimum": 1},
+        "initial_pass_cap": {"type": "integer", "minimum": 1, "maximum": 5},
+        "rationale": {"type": "string"}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "semantic_relation", "local_function", "disposition", "confidence", "rationale", "unique_residual_tokens"],
+      "properties": {
+        "unit_id": {"type": "string"},
+        "semantic_relation": {"enum": ["exact_equivalent", "paraphrase_equivalent", "partial_overlap", "related_non_duplicate", "uncertain"]},
+        "local_function": {"type": "string"},
+        "disposition": {"enum": ["preserve_in_place", "transfer_to_centre", "merge_into_centre", "convert_to_cross_reference", "remove_fully_redundant", "human_review"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "rationale": {"type": "string"},
+        "unique_residual_tokens": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "recurrenceFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family_id", "label", "unit_ids", "pair_evidence", "sections", "risk_score", "gravity_centre", "gravity_scores", "decisions"],
+      "properties": {
+        "family_id": {"type": "string"},
+        "label": {"type": "string"},
+        "unit_ids": {"type": "array", "minItems": 2, "items": {"type": "string"}, "uniqueItems": true},
+        "pair_evidence": {"type": "object"},
+        "sections": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "risk_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "gravity_centre": {"type": "string"},
+        "gravity_scores": {"type": "object", "additionalProperties": {"type": "number"}},
+        "decisions": {"type": "array", "items": {"$ref": "#/$defs/decision"}}
+      }
+    }
+  }
+}
+
