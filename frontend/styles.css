@@ -147,6 +147,8 @@ textarea:focus { box-shadow: inset 0 0 0 1px rgba(97,215,199,.22); }
 .model-audit.good { border-left: 2px solid var(--green); }
 .model-audit.warn { border-left: 2px solid var(--amber); }
 .model-audit.bad { border-left: 2px solid var(--red); }
+.model-audit small, .model-audit strong { display: block; }
+.model-audit strong { margin-top: 5px; }
 .semantic-gate { margin-top: 12px; padding: 14px 10px 4px; border-top: 1px solid var(--line); }
 .semantic-gate small, .semantic-gate strong { display: block; }
 .semantic-gate strong { margin-top: 7px; }

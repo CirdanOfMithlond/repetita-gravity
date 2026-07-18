@@ -121,8 +121,9 @@ function renderPass() {
   const audits = state.pass.family_audits || [];
   const auditCards = audits.map((audit) => {
     const theme = audit.adjudication?.theme_label || audit.family_id || "Runtime semantic layer";
+    const auditKind = audit.family_id ? "FAMILY AUDIT" : "RUNTIME GATE";
     const tone = audit.status === "COMMITTED" || audit.status === "PRESERVED" ? "good" : audit.status === "HUMAN_REVIEW" || audit.status === "MODEL_UNAVAILABLE" ? "warn" : "bad";
-    return `<article class="report-card model-audit ${tone}"><small>GPT-5.6 FAMILY AUDIT · ${esc(audit.status)}</small><strong>${esc(theme)}</strong><p>${esc(audit.reason || "Bounded semantic decision recorded.")}</p></article>`;
+    return `<article class="report-card model-audit ${tone}"><small>GPT-5.6 ${auditKind} · ${esc(audit.status)}</small><strong>${esc(theme)}</strong><p>${esc(audit.reason || "Bounded semantic decision recorded.")}</p></article>`;
   }).join("");
   $("#resultTitle").textContent = "Committed transactions";
   $("#verificationState").textContent = tx.length ? `${tx.length} COMMITTED` : "WITHHELD";

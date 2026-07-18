@@ -144,6 +144,7 @@ class GlobalSemanticTests(unittest.TestCase):
         self.assertEqual(result["model_status"], "MODEL_UNAVAILABLE")
         self.assertFalse(result["certification"]["eligible"])
         self.assertEqual(result["certification"]["label"], "NOT YET VERIFIED")
+        self.assertEqual(len(result["certification"]["reasons"]), 1)
 
 
 if __name__ == "__main__":

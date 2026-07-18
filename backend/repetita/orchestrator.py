@@ -255,7 +255,7 @@ def run_hybrid_gravity_pass(
     reasons.extend(formal_report.failures)
     if formal_report.unresolved_occurrences:
         reasons.append(f"{formal_report.unresolved_occurrences} occurrence(s) still require semantic adjudication")
-    if global_semantic["status"] != "PASSED":
+    elif global_semantic["status"] != "PASSED":
         reasons.append(global_semantic.get("reason", f"Global semantic review status: {global_semantic['status']}"))
     if eligible:
         stop_reason = (
