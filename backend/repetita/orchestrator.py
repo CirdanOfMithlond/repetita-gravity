@@ -8,6 +8,11 @@ from .openai_adapter import OpenAIAdapterError, OpenAIAdjudicator
 from .openai_rewrite import OpenAISemanticVerifier, OpenAITransactionProposer
 from .pass_controller import run_deterministic_safe_pass
 from .pipeline import analyse_document
+from .reference_audit import (
+    matches_reference_source,
+    reference_family_audits,
+    reference_global_verification,
+)
 from .transaction import FamilyTransaction, apply_model_transaction
 
 
@@ -159,8 +164,14 @@ def run_hybrid_gravity_pass(
     family_model_available = all(
         adapter.available for adapter in (adjudicator, proposer, semantic_verifier)
     )
+    reference_mode = not family_model_available and matches_reference_source(source)
 
-    if family_model_available:
+    if reference_mode:
+        reference_analysis = analyse_document(working)
+        reference_audits, reference_resolved = reference_family_audits(reference_analysis)
+        family_audits.extend(reference_audits)
+        resolved_unit_ids.update(reference_resolved)
+    elif family_model_available:
         for _ in range(max_model_families):
             analysis = analyse_document(working)
             candidate = next(
@@ -228,6 +239,8 @@ def run_hybrid_gravity_pass(
                 "the hackathon MVP does not yet run the required cross-chunk synthesis verifier."
             ),
         }
+    elif reference_mode:
+        global_semantic = reference_global_verification(source, working)
     elif not global_semantic_verifier.available:
         global_semantic = {
             "status": "MODEL_UNAVAILABLE",
@@ -268,7 +281,9 @@ def run_hybrid_gravity_pass(
         stop_reason = deterministic.stop_reason
 
     model_status = (
-        "MODEL_UNAVAILABLE"
+        "REFERENCE_AUDIT"
+        if reference_mode
+        else "MODEL_UNAVAILABLE"
         if not family_model_available
         else "COMPLETE"
         if not formal_report.unresolved_occurrences

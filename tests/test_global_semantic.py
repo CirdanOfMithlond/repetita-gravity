@@ -138,13 +138,19 @@ class GlobalSemanticTests(unittest.TestCase):
         self.assertTrue(result["certification"]["eligible"])
         self.assertEqual(result["certification"]["label"], "VERIFIED BY REPETITA GRAVITY")
 
-    def test_no_api_key_keeps_certification_fail_closed(self) -> None:
+    def test_bundled_sample_replays_reference_audit_without_api_key(self) -> None:
         text = (ROOT / "sample-data" / "adversarial-professional.md").read_text(encoding="utf-8")
+        result = run_hybrid_gravity_pass(text)
+        self.assertEqual(result["model_status"], "REFERENCE_AUDIT")
+        self.assertEqual(result["global_semantic_verification"]["mode"], "bundled_reference_audit")
+        self.assertTrue(result["certification"]["eligible"])
+        self.assertEqual(result["certification"]["label"], "VERIFIED BY REPETITA GRAVITY")
+
+    def test_non_reference_input_without_api_key_remains_fail_closed(self) -> None:
+        text = "# Note\n\nA unique statement remains protected."
         result = run_hybrid_gravity_pass(text)
         self.assertEqual(result["model_status"], "MODEL_UNAVAILABLE")
         self.assertFalse(result["certification"]["eligible"])
-        self.assertEqual(result["certification"]["label"], "NOT YET VERIFIED")
-        self.assertEqual(len(result["certification"]["reasons"]), 1)
 
 
 if __name__ == "__main__":

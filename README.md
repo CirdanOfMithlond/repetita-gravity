@@ -28,6 +28,7 @@ gates and independent global semantic review pass.
 - global ledger reconciliation against both the previous state and immutable original;
 - protection of evidence, structural recurrence and partial overlap;
 - automated adversarial tests;
+- a hash-bound, GPT-5.6 reference audit for the exact bundled fictional sample;
 - a dependency-free Python HTTP service and compact 1920×1080 workflow dashboard.
 
 ## What is intentionally withheld
@@ -39,10 +40,14 @@ Partial overlap, donor repair, receiver accretion and ambiguous centre selection
 require GPT-5.6 adjudication, an independently prompted family verifier,
 deterministic Python checks and, where necessary, human review. A second GPT-5.6
 call then rereads the complete reconstructed document without mutation authority.
-The final certification is emitted by the server only when the formal ledger has
-100% coverage, no family remains unresolved, and the independent whole-document
-review passes. Without a server-side API key, the deterministic demo remains useful
-but deliberately ends at `NOT YET VERIFIED`.
+The final certification is emitted only when the formal ledger has 100% coverage,
+no family remains unresolved, and the independent whole-document review passes.
+The public demo requires no key or paid credits: for the exact bundled fictional
+sample it replays a versioned GPT-5.6 reference audit created during the primary
+Build Week session, while Python recomputes every conservation gate at runtime.
+The source hash is checked before the audit is accepted. Custom documents never
+inherit those decisions; without a server-side API key they fail closed at
+`NOT YET VERIFIED`.
 
 ## Method
 
@@ -74,6 +79,10 @@ full-removal proposals and transformations that expose hard anchors to loss.
 
 Structured output guarantees schema conformance, not semantic truth. For that
 reason, model output remains a proposal until conservation verification passes.
+
+The public static demonstration is not presented as a live model call. It is a
+reproducible reference evaluation of one fixed fictional document. Live custom-text
+adjudication remains the production path and uses the same strict contracts.
 
 Official implementation references:
 
@@ -109,6 +118,15 @@ For model-assisted adjudication, copy `.env.example` to `.env`, set
 service. `OPENAI_REASONING_EFFORT` defaults to `high`. Never place the key in
 frontend code or commit the `.env` file.
 
+To build the free static reference demo used by GitHub Pages:
+
+```bash
+PYTHONPATH=backend python scripts/build_static_demo.py
+python -m http.server 4173 --directory _site
+```
+
+The build refuses to publish unless the bundled sample reaches certification.
+
 ## Current project structure
 
 - `backend/repetita/`: parser, ledger models, recurrence graph, planner, GPT adapters,
@@ -118,6 +136,7 @@ frontend code or commit the `.env` file.
 - `frontend/`: responsive workflow dashboard with no external assets;
 - `tests/`: deterministic, contract, model-adapter and transaction tests;
 - `docs/`: normative methodology and evaluation gates.
+- `.github/workflows/pages.yml`: test-gated static deployment to GitHub Pages.
 
 ## Authorship and Build Week evidence
 
@@ -133,12 +152,14 @@ used through Codex and the runtime semantic adjudicator specified by the product
 - the fallback concept dictionary is deliberately small and transparent;
 - no embedding provider or calibrated labelled corpus is connected yet;
 - proposition extraction is presently sentence-bounded in deterministic mode;
-- live GPT-5.6 donor-repair, receiver-accretion and global-review evaluations still
-  require a project API key and should be calibrated against a labelled corpus;
+- live GPT-5.6 donor-repair, receiver-accretion and global-review evaluations for
+  arbitrary documents require a project API key and should be calibrated against a
+  labelled corpus; the public reference demo itself requires no credits;
 - whole-document semantic certification currently fails closed for inputs that
   require structural chunking because cross-chunk synthesis verification is not yet
   implemented in the hackathon MVP;
-- the browser UI is working locally; public deployment remains pending.
+- the static public demo is deliberately limited to the bundled reference document;
+  custom input requires the local Python service.
 
 These limitations are explicit because the project’s value depends on withholding
 claims that its current verification layer cannot support.

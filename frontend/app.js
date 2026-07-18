@@ -6,6 +6,8 @@ const state = {
   originalText: "",
 };
 
+let offlineDemoPromise;
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const esc = (value = "") => String(value).replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -30,23 +32,49 @@ function setStep(step) {
   });
 }
 
+async function offlineDemo() {
+  if (!offlineDemoPromise) {
+    offlineDemoPromise = fetch("./demo-data.json").then((response) => {
+      if (!response.ok) throw new Error("Bundled demo data is unavailable");
+      return response.json();
+    });
+  }
+  return offlineDemoPromise;
+}
+
 async function api(path, payload) {
   setSystem("PROCESSING", "Running bounded analysis and deterministic checks.", "warn");
-  const response = await fetch(path, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(payload),
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || "Request failed");
-  return data;
+  try {
+    const response = await fetch(path, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error("Live service unavailable");
+    return await response.json();
+  } catch (_error) {
+    const demo = await offlineDemo();
+    const canonical = (value) => String(value || "").replaceAll("\r\n", "\n").trim();
+    if (canonical(payload.text) !== canonical(demo.sample)) {
+      throw new Error("The public static demo certifies the bundled sample only. Run the Python service for custom documents.");
+    }
+    if (path === "/api/analyse") return demo.analyse;
+    if (path === "/api/safe-pass") return demo.safe_pass;
+    throw new Error("This operation requires the live Python service.");
+  }
 }
 
 async function loadSample() {
-  const response = await fetch("/api/sample");
-  const data = await response.json();
-  $("#sourceText").value = data.text;
-  state.originalText = data.text;
+  let text;
+  try {
+    const response = await fetch("/api/sample");
+    if (!response.ok) throw new Error("Live sample unavailable");
+    text = (await response.json()).text;
+  } catch (_error) {
+    text = (await offlineDemo()).sample;
+  }
+  $("#sourceText").value = text;
+  state.originalText = text;
   $("#auditMessage").textContent = "Fictional adversarial sample loaded — no analysis run.";
 }
 
@@ -155,7 +183,10 @@ function renderVerification() {
     no_new_candidate_family: report.newly_introduced_family_count === 0,
   };
   renderChecks(formalChecks);
-  $("#resultContent").insertAdjacentHTML("beforeend", `<div class="semantic-gate"><small>INDEPENDENT GPT-5.6 WHOLE-DOCUMENT REVIEW</small><strong class="${semantic.status === "PASSED" ? "pass" : semantic.status === "FAILED" ? "fail" : "pending"}">${esc(semantic.status)}</strong><p>${esc(semantic.reason || (semantic.status === "PASSED" ? "Every source unit and document-level semantic invariant passed independent review." : "Semantic certification remains withheld."))}</p></div>`);
+  const semanticLabel = semantic.mode === "bundled_reference_audit"
+    ? "GPT-5.6 REFERENCE AUDIT + PYTHON RE-VERIFICATION"
+    : "INDEPENDENT GPT-5.6 WHOLE-DOCUMENT REVIEW";
+  $("#resultContent").insertAdjacentHTML("beforeend", `<div class="semantic-gate"><small>${semanticLabel}</small><strong class="${semantic.status === "PASSED" ? "pass" : semantic.status === "FAILED" ? "fail" : "pending"}">${esc(semantic.status)}</strong><p>${esc(semantic.reason || (semantic.status === "PASSED" ? "Every source unit and document-level semantic invariant passed independent review." : "Semantic certification remains withheld."))}</p></div>`);
   setSystem(certified ? state.pass.certification.label : formalPassed ? "FORMAL GATES PASSED" : "NOT VERIFIED", certified ? "Formal and independent semantic gates passed." : formalPassed ? "Independent global semantic certification remains pending." : "A critical conservation condition failed.", certified || formalPassed ? "ready" : "bad");
 }
 

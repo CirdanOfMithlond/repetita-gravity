@@ -24,6 +24,12 @@ class FrontendContractTests(unittest.TestCase):
         html = (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
         self.assertNotRegex(html, r'https?://')
 
+    def test_static_demo_has_fail_closed_offline_fallback(self) -> None:
+        script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("./demo-data.json", script)
+        self.assertIn("certifies the bundled sample only", script)
+        self.assertIn("GPT-5.6 REFERENCE AUDIT + PYTHON RE-VERIFICATION", script)
+
     def test_stage_status_and_three_axis_classification_are_visible(self) -> None:
         script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
         self.assertIn("LEDGER INDEXED", script)
