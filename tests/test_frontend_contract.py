@@ -24,6 +24,13 @@ class FrontendContractTests(unittest.TestCase):
         html = (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
         self.assertNotRegex(html, r'https?://')
 
+    def test_static_assets_use_project_pages_relative_paths(self) -> None:
+        html = (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('href="./styles.css', html)
+        self.assertIn('src="./app.js', html)
+        self.assertNotIn('href="/styles.css', html)
+        self.assertNotIn('src="/app.js', html)
+
     def test_static_demo_has_fail_closed_offline_fallback(self) -> None:
         script = (ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
         self.assertIn("./demo-data.json", script)
