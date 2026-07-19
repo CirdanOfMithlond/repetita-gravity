@@ -163,3 +163,7 @@ used through Codex and the runtime semantic adjudicator specified by the product
 
 These limitations are explicit because the project’s value depends on withholding
 claims that its current verification layer cannot support.
+
+## License
+
+Repetita Gravity is released under the [MIT License](LICENSE).
