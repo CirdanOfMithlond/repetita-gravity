@@ -1,134 +1,119 @@
-# Repetita Gravity - Friendly YouTube Demo Script
+# Repetita Gravity — OpenAI Build Week Demo Script
 
-Target duration: about 2 minutes and 30 seconds.
+Target duration: 2 minutes 35–38 seconds.
 
-Record only the browser at 1920 x 1080 and 100% zoom. Speak naturally, as if you
-were showing the project to an intelligent friend who has never seen it before.
+Record the browser at 1920×1080, 16:9, and 100% zoom. Keep every click on its own line.
 
-## 00:00 - 00:18
+## 00:00–00:18
 
 SAY:
 
-We have all seen it happen. A long document repeats the same idea again and again,
-but each time in slightly different words. Finding that repetition is easy. Fixing
-it without losing evidence, context, or meaning is the difficult part. That is the
-problem Repetita Gravity was built to solve.
+Hello there. This compact application was built for OpenAI Build Week to demonstrate a broader writing-control method, not a full word processor. It shows how a draft can be analysed, returned, and cleared of unnecessary repetition while preserving meaning and placing each idea where it logically belongs.
 
 CLICK:
 
 01 Read
 
-## 00:18 - 00:36
+## 00:18–00:34
 
 SAY:
 
-Let us begin with this fictional professional document. Before changing anything,
-Repetita Gravity reads its structure, measures its size and complexity, and decides
-how much work is safe. A short letter and a hundred-page report should never be
-handled in exactly the same way.
+The system reads the complete document, identifies its structure, measures its complexity, and decides how much work is safe. A short email and a long professional report should not use the same resources or the same number of passes.
 
 CLICK:
 
 02 Ledger
 
-## 00:36 - 00:55
+## 00:34–00:50
 
 SAY:
 
-Now every meaningful statement receives a stable identity. Claims, evidence,
-numbers, qualifications, exceptions and recommendations are all recorded in a
-Conservation Ledger. This gives the system one simple rule: nothing important may
-disappear silently.
+Every meaningful statement receives a stable identity in the Conservation Ledger. Claims, evidence, numbers, qualifications, and exceptions are recorded before rewriting. The rule is simple: no substantive content may disappear silently.
 
 CLICK:
 
 03 Recurrences
 
-## 00:55 - 01:12
+## 00:50–01:04
 
 SAY:
 
-The engine now discovers families of recurring ideas, including paraphrases that
-ordinary word matching can miss. But similarity is only a clue. Two passages can
-sound alike and still perform completely different jobs.
+Repetita Gravity maps families of recurring meaning, including ideas repeated through different wording. Similarity alone is not enough, because an apparent repetition may actually be evidence, intentional structure, or a distinct argumentative function.
 
 CLICK:
 
 04 Classify
 
-## 01:12 - 01:31
+## 01:04–01:18
 
 SAY:
 
-So each occurrence is judged in its own context. Is it accidental repetition,
-necessary evidence, an intentional structural reminder, or a genuinely different
-function? Safe cases can move forward. Uncertain cases are preserved instead of
-being guessed away.
+Each occurrence is classified in context. Unnecessary narrative repetition can move forward, while evidence, necessary echoes, and deliberate structure remain protected. Ambiguous cases are preserved rather than guessed away.
 
 CLICK:
 
 05 Centres
 
-## 01:31 - 01:48
+## 01:18–01:34
 
 SAY:
 
-Here is the gravity idea. Every recurring theme is pulled toward the section where
-it belongs most naturally. That section becomes its Logical Gravity Centre: the
-place where the idea can be explained completely with the least disruption to the
-rest of the document.
+For every recurring theme, the system identifies its Logical Gravity Centre: the section best qualified to host the complete treatment. Necessary occurrences remain in place or become precise cross-references.
 
 CLICK:
 
 06 Plan
 
-## 01:48 - 02:00
+## 01:34–01:47
 
 SAY:
 
-Repetita Gravity then creates an adaptive plan. It can stop early when the document
-is stable, or refuse another pass when further rewriting would create more risk
-than benefit.
+An adaptive plan estimates the justified number of passes from length, repetition density, dispersion, and semantic risk. It may stop early when the structure stabilises, because more rewriting is not always better.
 
 CLICK:
 
 07 Gravity pass
 
-## 02:00 - 02:17
+## 01:47–02:08
 
 SAY:
 
-Watch what happens to this duplicate. The repeated payload is consolidated, but
-the original location is not left broken. Its donor sentence is repaired into a
-clear reference, while unique evidence and qualifications stay exactly where they
-are needed.
+The repeated payload is removed from one donor passage, but the surrounding sentence is not left damaged. The donor is repaired, the canonical centre is preserved or expanded as required, and the complete revised document is returned. We can view it, compare the traceable change, copy it, or download it.
+
+CLICK:
+
+Compare
+
+CLICK:
+
+Revised
+
+## 02:08–02:20
+
+SAY:
+
+The governing principle is no disruption: reduce redundancy without weakening the argument, losing evidence, changing qualifications, or breaking narrative continuity.
 
 CLICK:
 
 08 Verify
 
-## 02:17 - 02:33
+## 02:20–02:31
 
 SAY:
 
-Finally, an independent Python layer checks every original semantic unit and every
-protected anchor. This public demo uses a versioned GPT-5.6 reference audit tied to
-this exact fictional sample, so it works without an API key or paid credits and
-cannot certify an unrelated document by mistake.
+Python independently reconciles every original unit and protected anchor. Certification remains withheld unless formal conservation and the GPT-5.6 semantic audit both pass.
 
 CLICK:
 
 09 Report
 
-## 02:33 - 02:48
+## 02:31–02:38
 
 SAY:
 
-And here is the result: the repetition is reduced, the document remains fully
-covered, and every decision is auditable. I designed the gravity and conservation
-method. Codex and GPT-5.6 Sol helped turn it into a tested, working system. Every
-idea has a natural home. Repetita Gravity helps it get there safely.
+The final report includes the deliverable, the comparison record, and certification. I designed the methodology; Codex and GPT-5.6 Sol helped turn it into this tested demonstration.
 
 ACTION:
 
-Hold the final VERIFIED BY REPETITA GRAVITY screen for five seconds.
+Hold the VERIFIED BY REPETITA GRAVITY screen for two seconds.
