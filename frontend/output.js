@@ -51,9 +51,17 @@
     const template = document.createElement("template");
     template.innerHTML = deliverableWorkbench("revised").trim();
     const workbench = template.content.firstElementChild;
+    const legacyRevisedCard = [...reportList.children].find((node) => node.querySelector?.(".revised-document"));
+    if (legacyRevisedCard) legacyRevisedCard.remove();
+    const kpis = reportList.querySelector(".report-kpis");
     const stopCard = [...reportList.children].find((node) => node.textContent.includes("STOP DECISION") || node.textContent.includes("STOP REASON"));
-    if (stopCard) stopCard.insertAdjacentElement("afterend", workbench);
-    else reportList.appendChild(workbench);
+    if (document.querySelector("#resultTitle")?.textContent === "Gravity Report" && kpis) {
+      kpis.insertAdjacentElement("afterend", workbench);
+    } else if (stopCard) {
+      stopCard.insertAdjacentElement("afterend", workbench);
+    } else {
+      reportList.appendChild(workbench);
+    }
   }
 
   async function copyRevisedText() {
